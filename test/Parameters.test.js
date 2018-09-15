@@ -18,11 +18,11 @@ contract('MichalPolakToken', function ([_, creator]) {
     token = await MichalPolakToken.new({ from: creator });
   });
 
-  it('The name is Michal Polak Token', async function () {
+  it('The token name is "Michal Polak Token"', async function () {
     (await token.name()).should.equal('Michal Polak Token');
   });
 
-  it('The symbol is MPT', async function () {
+  it('The token symbol is "MPT"', async function () {
     (await token.symbol()).should.equal('MPT');
   });
 
@@ -30,7 +30,7 @@ contract('MichalPolakToken', function ([_, creator]) {
     (await token.decimals()).should.be.bignumber.equal(18);
   });
 
-  it('CAP is 21 000 000 tokens', async function () {
+  it('Token cap is 21 000 000 tokens', async function () {
     (await token.cap()).should.be.bignumber.equal(21000000 * Math.pow(10, 18));
     });
 
@@ -44,7 +44,7 @@ contract('MichalPolakToken', function ([_, creator]) {
 
   it('Creator is a owner',async function () {
     (await token.isOwner({from: creator})).should.be.equal(true);
-});
+  });
 
   it('Creator is a mainer',async function () {
     (await token.isMinter(creator)).should.equal(true);
@@ -57,5 +57,10 @@ contract('MichalPolakToken', function ([_, creator]) {
   it('Contract has 10 000 000 tokens',async function () {
     (await token.balanceOf(token.address)).should.be.bignumber.equal(10000000 * Math.pow(10, 18));
   });
+
+  it('Mining is not finished',async function () {
+    (await token.mintingFinished({ from: creator })).should.be.equal(false);
+  });
+  
 
 });
