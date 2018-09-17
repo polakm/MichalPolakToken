@@ -217,12 +217,13 @@ contract('MichalPolakToken', function ([contractAccount, creator, account1]) {
   it('After finish minting account with minter role can\'t mint tokens', async function () {
    
     //GIVEN
+    var amount = 1000;
     await token.addMinter(usualAccount,{ from: owner });
     await token.finishMinting({ from: owner });
 
     //WHEN
     try { 
-      await token.mint(usualAccount, 1000, { from: usualAccount });
+      await token.mint(usualAccount, amount, { from: usualAccount });
 
       //THEN
     } catch (error) {
