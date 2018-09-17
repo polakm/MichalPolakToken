@@ -26,17 +26,17 @@ contract('MichalPolakToken', function ([_, creator, usualAccount, otherUsualAcco
         //GIVEN
         var amount = 10000;
         await token.approve(usualAccount, amount, { from: owner });
-        var balance = (await token.balanceOf(usualAccount, {from: owner}));
+        var balance = (await token.balanceOf(otherUsualAccount, {from: owner}));
         
         //WHEN
         await token.transferFrom(owner, otherUsualAccount, amount, { from: usualAccount });
 
         //THEN
-        (await token.balanceOf(usualAccount)).should.be.bignumber.equal(balance.add(amount));
+        (await token.balanceOf(otherUsualAccount)).should.be.bignumber.equal(balance.add(amount));
 
     });
 
-    it('Approved usual account can\'t trasfer more tokens from owner account than approved amount', async function () {
+    it('Approved usual account can\'t trasfer more tokens from owner account than approved by owner amount', async function () {
 
         //GIVEN
         var approvedAmout = 10000;
@@ -142,7 +142,7 @@ contract('MichalPolakToken', function ([_, creator, usualAccount, otherUsualAcco
     });
 
 
-    it('After contract owner account approved ammount for usual account, allowance from owner for usual account is equal approved amount', async function () {
+    it('After contract owner account approve ammount for usual account, allowance for this account is equal approved amount', async function () {
 
         //GIVEN
         var amount = 10000;
@@ -156,7 +156,7 @@ contract('MichalPolakToken', function ([_, creator, usualAccount, otherUsualAcco
     });
 
 
-    it('After contract owner account incresee allowance for approved other account, his allowance is equal approved amount', async function () {
+    it('After contract owner account incresee allowance for approved other account, his allowance is equal sum of approved before amount and increased value', async function () {
 
         //GIVEN
         var amount = 10000;
@@ -173,22 +173,23 @@ contract('MichalPolakToken', function ([_, creator, usualAccount, otherUsualAcco
     });
 
 
-    it('After incresee by owner account allwoance, usual account can spend incresed amount', async function () {
+    it('After cotract owner account incresee allowance for usual account, usual account can trasfer the increased allowance to other account', async function () {
 
         //GIVEN
         var amount = 10000;
         var increaseValue = 100;
+        var increasedAllowance = amount+ increaseValue;
 
         //WHEN
         await token.approve(usualAccount, amount, { from: owner });
         (await token.increaseAllowance(usualAccount, increaseValue, { from: owner }));
 
         //THEN
-        (await token.transferFrom(owner, usualAccount, amount + increaseValue, { from: usualAccount }))
+        (await token.transferFrom(owner, usualAccount, increasedAllowance, { from: usualAccount }))
     });
 
 
-    it('After decresee for owner account and usual account is equal approved amount', async function () {
+    it('After contract owner account decresee allowance for usual account, allowance of this account is equal difference of approved before amount and decreased value', async function () {
 
         //GIVEN
         var amount = 10000;
@@ -205,7 +206,7 @@ contract('MichalPolakToken', function ([_, creator, usualAccount, otherUsualAcco
     });
 
 
-    it('After decresee for owner account and usual account is equal approved amount', async function () {
+    it('After contract owner account decresee allowance for usual account, allowance of this account is equal difference of approved before amount and decreased value', async function () {
 
         //GIVEN
         var amount = 10000;
@@ -220,23 +221,23 @@ contract('MichalPolakToken', function ([_, creator, usualAccount, otherUsualAcco
 
     });
 
-    it('After decresee by owner account allwoance, usual account can spend incresed amount', async function () {
+    it('After contract owner account decrease allwoance for approved usual account,the usual account can spend incresed amount', async function () {
 
         //GIVEN
         var amount = 10000;
         var decreaseValue = 100;
-        var amountToTranfer = amount - decreaseValue
+        var decreasedAmout = amount - decreaseValue
 
         //WHEN
         await token.approve(usualAccount, amount, { from: owner });
         (await token.decreaseAllowance(usualAccount, decreaseValue, { from: owner }));
         
         //THEN
-        (await token.transferFrom(owner, usualAccount, amountToTranfer, { from: usualAccount }))
+        (await token.transferFrom(owner, usualAccount, decreasedAmout, { from: usualAccount }))
     });
 
 
-    it('After decresee by owner account and usual account can\'t spend the initial approved amount', async function () {
+    it('After contract owner account decrease allowance for approved usual account,the usual account can\'t spend the before approved amount', async function () {
 
         //GIVEN
         var amount = 10000;
