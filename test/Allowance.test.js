@@ -10,45 +10,42 @@ require('chai')
     .use(require('chai-bignumber')(BigNumber))
     .should();
 
-contract('MichalPolakToken', function ([_, creator, account1, account2]) {
-    let token;
+contract('MichalPolakToken', function ([_, creator, usualAccount, otherUsualAccount]) {
+    let token, owner;
 
     const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
     beforeEach(async function () {
         token = await MichalPolakToken.new({ from: creator });
+        owner = creator;
     });
 
 
-    it('After sponsor approve amount, spander can trasfer this amount from sponsor account to another account', async function () {
+    it('After approved usual account trasfer from owner account aprroved amount to other account, balance of this account is incresed by trasfered amount', async function () {
 
         //GIVEN
         var amount = 10000;
-        var sponsor = creator;
-        var spender = account1;
-        var to = account2;
-        await token.approve(spender, amount, { from: creator });
-
+        await token.approve(usualAccount, amount, { from: owner });
+        var balance = (await token.balanceOf(usualAccount, {from: owner}));
+        
         //WHEN
-        await token.transferFrom(sponsor, to, amount, { from: spender });
+        await token.transferFrom(owner, otherUsualAccount, amount, { from: usualAccount });
 
         //THEN
-        (await token.balanceOf(to)).should.be.bignumber.equal(amount);
+        (await token.balanceOf(usualAccount)).should.be.bignumber.equal(balance.add(amount));
 
     });
 
-    it('After sponsor approve amount, spander can\'t trasfer grather amount from sponsor account', async function () {
+    it('Approved usual account can\'t trasfer more tokens from owner account than approved amount', async function () {
 
         //GIVEN
-        var amount = 10000;
-        var from = creator;
-        var spender = account1;
-        var to = account2;
+        var approvedAmout = 10000;
+        var amountToTranfer = approvedAmout+1
 
         //WHEN
-        await token.approve(spender, amount, { from: creator });
+        await token.approve(usualAccount, approvedAmout, { from: owner });
         try {
-            await token.transferFrom(from, to, amount + 1, { from: spender });
+            await token.transferFrom(owner, otherUsualAccount, amountToTranfer, { from: usualAccount });
         } catch (error) {
 
             //THEN
@@ -59,18 +56,15 @@ contract('MichalPolakToken', function ([_, creator, account1, account2]) {
 
     });
 
-    it('Spender can\'t transfer from sponsor account negative amount', async function () {
+    it('Approved usual account can\'t transfer from owner account to other usual account the negative amount of tokens', async function () {
 
         //GIVEN
         var amount = 10000;
-        var from = creator;
-        var spender = account1;
-        var to = account2;
 
         //WHEN
-        await token.approve(spender, amount, { from: creator });
+        await token.approve(usualAccount, amount, { from: owner });
         try {
-            await token.transferFrom(from, to, -amount, { from: spender });
+            await token.transferFrom(owner, otherUsualAccount, -amount, { from: usualAccount });
         } catch (error) {
 
             //THEN
@@ -81,15 +75,13 @@ contract('MichalPolakToken', function ([_, creator, account1, account2]) {
 
     });
 
-    it('Tranfer from sponsor account to zero address is blocked', async function () {
+    it('Approved usuaual acount can\'t tranfer from owner account to zero address', async function () {
 
         //GIVEN
         var amount = 99999999;
-        var from = creator;
-        var to = ZERO_ADDRESS;
 
         try {
-            await token.transferFrom(from, to, amount, { from: creator });
+            await token.transferFrom(owner, ZERO_ADDRESS, amount, { from: owner });
         } catch (error) {
 
             //THEN
@@ -100,15 +92,13 @@ contract('MichalPolakToken', function ([_, creator, account1, account2]) {
 
     });
 
-    it('Transfer from zero addres to account is blocked', async function () {
+    it('Usual account can\'t transfer from zero address to other usual account', async function () {
 
         //GIVEN
         var amount = 99999999;
-        var from = ZERO_ADDRESS;
-        var to = account1;
 
         try {
-            await token.transferFrom(from, to, amount, { from: creator });
+            await token.transferFrom(ZERO_ADDRESS, usualAccount, amount, { from: owner });
         } catch (error) {
 
             //THEN
@@ -120,185 +110,144 @@ contract('MichalPolakToken', function ([_, creator, account1, account2]) {
     });
 
 
-    it('After transferring tokens by spender, the total supply is not changed', async function () {
+    it('After approved usual account transfer tokens from owner account to other usual account, the total supply remains unchanged', async function () {
 
         //GIVEN
         var amount = 99999999;
-        var from = creator;
-        var spender = account1;
-        var to = account2;
-        var totalSupply = (await token.totalSupply({ from: spender }));
+        var totalSupply = (await token.totalSupply({ from: usualAccount }));
 
         //WHEN
-        await token.approve(spender, amount, { from: creator });
-        await token.transferFrom(from, to, amount, { from: spender });
+        await token.approve(usualAccount, amount, { from: owner });
+        await token.transferFrom(owner, otherUsualAccount, amount, { from: usualAccount });
 
         //THEN
-        (await token.totalSupply({ from: spender })).should.be.bignumber.equal(totalSupply);
+        (await token.totalSupply({ from: usualAccount })).should.be.bignumber.equal(totalSupply);
 
     });
 
 
-    it('After transferring tokens by spender, the cap is not changed', async function () {
+    it('After approved usual account trasfer tokens form owner account to other usual account, the cap remains unchanged', async function () {
 
         //GIVEN
         var amount = 99999999;
-        var from = creator;
-        var spender = account1;
-        var to = account2;
-        var cap = (await token.cap({ from: spender }));
+        var cap = (await token.cap({ from: usualAccount }));
 
         //WHEN
-        await token.approve(spender, amount, { from: creator });
-        await token.transferFrom(from, to, amount, { from: spender });
+        await token.approve(usualAccount, amount, { from: owner });
+        await token.transferFrom(owner, otherUsualAccount, amount, { from: usualAccount });
 
         //THEN
-        (await token.cap({ from: spender })).should.be.bignumber.equal(cap);
+        (await token.cap({ from: usualAccount })).should.be.bignumber.equal(cap);
 
     });
 
 
-    it('Allowance for sponsor and spender is equal approved amount', async function () {
+    it('After contract owner account approved ammount for usual account, allowance from owner for usual account is equal approved amount', async function () {
 
         //GIVEN
         var amount = 10000;
-        var from = creator;
-        var spender = account1;
-        var to = account2;
 
         //WHEN
-        await token.approve(spender, amount, { from: creator });
+        await token.approve(usualAccount, amount, { from: owner });
 
         //THEN
-        (await token.allowance(from, spender, { from: account1 })).should.be.bignumber.equal(10000);
+        (await token.allowance(owner, usualAccount, { from: usualAccount })).should.be.bignumber.equal(10000);
 
     });
 
 
-    it('After incresee for sponsor and spender is equal approved amount', async function () {
+    it('After contract owner account incresee allowance for approved other account, his allowance is equal approved amount', async function () {
 
         //GIVEN
         var amount = 10000;
         var increaseValue = 100;
-        var from = creator;
-        var spender = account1;
-        var to = account2;
+        var expectedAllowance = amount+increaseValue
 
         //WHEN
-        await token.approve(spender, amount, { from: creator });
-        (await token.increaseAllowance(spender, increaseValue, { from: creator }));
-
+        await token.approve(usualAccount, amount, { from: owner });
+        (await token.increaseAllowance(usualAccount, increaseValue, { from: owner }));
         //THEN
-        (await token.allowance(from, spender, { from: account1 })).should.be.bignumber.equal(10000 + 100);
+
+        (await token.allowance(owner, usualAccount, { from: usualAccount })).should.be.bignumber.equal(expectedAllowance);
 
     });
 
-    it('After incresee for sponsor and spender is equal approved amount', async function () {
+
+    it('After incresee by owner account allwoance, usual account can spend incresed amount', async function () {
 
         //GIVEN
         var amount = 10000;
         var increaseValue = 100;
-        var from = creator;
-        var spender = account1;
-        var to = account2;
 
         //WHEN
-        await token.approve(spender, amount, { from: creator });
-        (await token.increaseAllowance(spender, increaseValue, { from: creator }));
+        await token.approve(usualAccount, amount, { from: owner });
+        (await token.increaseAllowance(usualAccount, increaseValue, { from: owner }));
+
         //THEN
-
-        (await token.allowance(from, spender, { from: account1 })).should.be.bignumber.equal(10000 + increaseValue);
-
+        (await token.transferFrom(owner, usualAccount, amount + increaseValue, { from: usualAccount }))
     });
 
 
-    it('After incresee by sponsor allwoance, spender can spend incresed amount', async function () {
-
-        //GIVEN
-        var amount = 10000;
-        var increaseValue = 100;
-        var from = creator;
-        var spender = account1;
-        var to = account2;
-
-        //WHEN
-        await token.approve(spender, amount, { from: creator });
-        (await token.increaseAllowance(spender, increaseValue, { from: creator }));
-
-        //THEN
-        (await token.transferFrom(from, spender, amount + increaseValue, { from: account1 }))
-    });
-
-
-    it('After decresee for sponsor and spender is equal approved amount', async function () {
+    it('After decresee for owner account and usual account is equal approved amount', async function () {
 
         //GIVEN
         var amount = 10000;
         var decreaseValue = 100;
-        var from = creator;
-        var spender = account1;
-        var to = account2;
-
+        var expectedAllowance = amount - decreaseValue;
+        await token.approve(usualAccount, amount, { from: owner });
+       
         //WHEN
-        await token.approve(spender, amount, { from: creator });
-        (await token.decreaseAllowance(spender, decreaseValue, { from: creator }));
+        (await token.decreaseAllowance(usualAccount, decreaseValue, { from: owner }));
         //THEN
 
-        (await token.allowance(from, spender, { from: account1 })).should.be.bignumber.equal(10000 - 100);
+        (await token.allowance(owner, usualAccount, { from: usualAccount })).should.be.bignumber.equal(10000 - 100);
 
     });
 
 
-    it('After decresee for sponsor and spender is equal approved amount', async function () {
+    it('After decresee for owner account and usual account is equal approved amount', async function () {
 
         //GIVEN
         var amount = 10000;
         var decreaseValue = 100;
-        var from = creator;
-        var spender = account1;
-        var to = account2;
-
+        await token.approve(usualAccount, amount, { from: owner });
+        
         //WHEN
-        await token.approve(spender, amount, { from: creator });
-        (await token.decreaseAllowance(spender, decreaseValue, { from: creator }));
+        (await token.decreaseAllowance(usualAccount, decreaseValue, { from: owner }));
         //THEN
 
-        (await token.allowance(from, spender, { from: account1 })).should.be.bignumber.equal(10000 - 100);
+        (await token.allowance(owner, usualAccount, { from: usualAccount })).should.be.bignumber.equal(10000 - 100);
 
     });
 
-    it('After decresee by sponsor allwoance, spender can spend incresed amount', async function () {
+    it('After decresee by owner account allwoance, usual account can spend incresed amount', async function () {
 
         //GIVEN
         var amount = 10000;
         var decreaseValue = 100;
-        var from = creator;
-        var spender = account1;
-        var to = account2;
+        var amountToTranfer = amount - decreaseValue
 
         //WHEN
-        await token.approve(spender, amount, { from: creator });
-        (await token.decreaseAllowance(spender, decreaseValue, { from: creator }));
-
-        (await token.transferFrom(from, spender, amount - decreaseValue, { from: account1 }))
+        await token.approve(usualAccount, amount, { from: owner });
+        (await token.decreaseAllowance(usualAccount, decreaseValue, { from: owner }));
+        
+        //THEN
+        (await token.transferFrom(owner, usualAccount, amountToTranfer, { from: usualAccount }))
     });
 
 
-    it('After decresee by sponsor and spender can\'t spend the initial approved amount', async function () {
+    it('After decresee by owner account and usual account can\'t spend the initial approved amount', async function () {
 
         //GIVEN
         var amount = 10000;
         var decreaseValue = 100;
-        var from = creator;
-        var spender = account1;
-        var to = account2;
 
         //WHEN
-        await token.approve(spender, amount, { from: creator });
-        (await token.decreaseAllowance(spender, decreaseValue, { from: creator }));
+        await token.approve(usualAccount, amount, { from: owner });
+        (await token.decreaseAllowance(usualAccount, decreaseValue, { from: owner }));
 
         try {
-            (await token.transferFrom(from, to, amount, { from: account1 }))
+            (await token.transferFrom(owner, otherUsualAccount, amount, { from: usualAccount }))
         } catch (error) {
 
             //THEN
