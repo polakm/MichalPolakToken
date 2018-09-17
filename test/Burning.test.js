@@ -10,15 +10,15 @@ require('chai')
   .use(require('chai-bignumber')(BigNumber))
   .should();
 
-contract('MichalPolakToken', function ([contract, creator, account1,account2]) {
-  let token;
+contract('MichalPolakToken', function ([contract, creator, usualAccount]) {
+  let token, owner;
 
   const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
   beforeEach(async function () {
     
     token = await MichalPolakToken.new({ from: creator });
-
+    owner = creator;
   });
 
 
@@ -56,54 +56,50 @@ contract('MichalPolakToken', function ([contract, creator, account1,account2]) {
   });
 
 
-  it('After burn tokens from sponsor account by burner, the sponsor balance is reduced by amount of burned tokens',async function () {
+  it('After burn tokens from contract owner account by approved usual account, the owner balance is reduced by amount of burned tokens',async function () {
    
     //GIVEN
-    var sponsor = creator;
-    var burner = account1;
     var amount = 10000;
-    var balance = (await token.balanceOf(sponsor,{ from: sponsor }));
-    await token.approve(burner, amount, { from: sponsor });
+    var balance = (await token.balanceOf(owner, { from: owner }));
+    await token.approve(usualAccount, amount, { from: owner });
 
     //WHEN
-    await token.burnFrom(sponsor, amount, { from: burner });
+    await token.burnFrom(owner, amount, { from: usualAccount });
 
     //THEN
-    (await token.balanceOf(sponsor, { from: sponsor })).should.be.bignumber.equal(balance.sub(amount));
+    (await token.balanceOf(owner, { from: owner })).should.be.bignumber.equal(balance.sub(amount));
 
   });
 
 
-  it('After burn tokens from sponsor account by burner, the burner account balance is not changed',async function () {
+  it('After burn tokens from conract owner account by approved usual account, the usual account balance remains unchanged',async function () {
    
     //GIVEN
-    var sponsor = creator;
-    var burner = account1;
+    var owner = creator;
     var amount = 10000;
-    await token.transfer(burner, amount, { from: sponsor });
-    var balance = (await token.balanceOf(burner,{ from: burner }));
-    await token.approve(burner, amount, { from: sponsor });
+    await token.transfer(usualAccount, amount, { from: owner });
+    var balance = (await token.balanceOf(usualAccount,{ from: usualAccount }));
+    await token.approve(usualAccount, amount, { from: owner });
   
     //WHEN
-    await token.burnFrom(sponsor, amount, { from: burner });
+    await token.burnFrom(owner, amount, { from: usualAccount });
   
     //THEN
-    (await token.balanceOf(burner, { from: burner })).should.be.bignumber.equal(balance);
+    (await token.balanceOf(usualAccount, { from: usualAccount })).should.be.bignumber.equal(balance);
   
   });
 
 
-  it('Burner can\'t burn the more tokens from sponsor account than approved by sponsor allowance',async function () {
+  it('Approved usual account can\'t burn the more tokens from contract owner account than allowance approved by owner',async function () {
    
     //GIVEN
-    var sponsor = creator;
-    var burner = account1;
-    var amount = 10000;
-    await token.approve(burner, amount, { from: sponsor });
-
+    var approvedAmount = 10000;
+    var amountToBurn = approvedAmount+1;
+    await token.approve(usualAccount, approvedAmount, { from: owner });
+   
     //WHEN
     try { 
-      await token.burnFrom(sponsor, amount+1, { from: burner });
+      await token.burnFrom(owner, amountToBurn, { from: usualAccount });
     } catch (error) {
      
       //THEN
@@ -115,17 +111,16 @@ contract('MichalPolakToken', function ([contract, creator, account1,account2]) {
   });
 
 
-  it('Burner can\'t burn a negative amount of tokens from sponsor account',async function () {
+  it('Approved usual account can\'t burn a negative amount of tokens from contract owner account',async function () {
    
     //GIVEN
-    var sponsor = creator;
-    var burner = account1;
-    var amount = 10000;
-    await token.approve(burner, amount, { from: sponsor });
+    var approvedAmount = 10000;
+    var amountToBurn = -10000;
+    await token.approve(usualAccount, approvedAmount, { from: owner });
     
     //WHEN
     try { 
-      await token.burnFrom(sponsor, -amount, { from: burner });
+      await token.burnFrom(owner, amountToBurn, { from: usualAccount });
     } catch (error) {
      
       //THEN
