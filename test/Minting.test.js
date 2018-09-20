@@ -1,7 +1,7 @@
 const MichalPolakToken = artifacts.require('MichalPolakToken');
 const Web3 = require('web3');
 var web3 = new Web3();
-web3.utils= require('web3-utils');
+web3.utils = require('web3-utils');
 web3.setProvider(new web3.providers.HttpProvider('http://localhost:8545'));
 
 const BigNumber = web3.BigNumber;
@@ -23,216 +23,218 @@ contract('MichalPolakToken', function ([contractAccount, creator, account1]) {
     usualAccount = account1;
   });
 
+  describe('Mining.test.js', function () {
 
-  it('After minting tokens by contract owner for his account, his balance is increased by the amount of minted tokens',async function () {
-    
-    //GIVEN
-    var amount = 1000;
-    var balance = (await token.balanceOf(owner));
-    
-    //WHEN
-    await token.mint(owner , amount, { from: owner });
-    
-    //THEN
-    (await token.balanceOf(owner)).should.be.bignumber.equal(balance.add(amount));
+    it('After minting tokens by contract owner for his account, his balance is increased by the amount of minted tokens', async function () {
 
-  });
+      //GIVEN
+      var amount = 1000;
+      var balance = (await token.balanceOf(owner));
 
-
-  it('Contract owner can\'t mint negative amount of tokens',async function () {
-   
-    //GIVEN
-    var amount = -1000;
-
-    //WHEN
-    try { 
+      //WHEN
       await token.mint(owner, amount, { from: owner });
 
       //THEN
-    } catch (error) {
-      error.message.should.include('revert', `Expected "revert", got ${error} instead`);
-      return;
-    }
-    should.fail('Expected revert not received');
+      (await token.balanceOf(owner)).should.be.bignumber.equal(balance.add(amount));
 
-  });
-
-
-  it('Usual account with minter role, can\'t mint negative amount of tokens',async function () {
-   
-    //GIVEN
-    var amount = -1000;
-    await token.addMinter(usualAccount,{ from: owner });
-
-    //WHEN
-    try { 
-      await token.mint(usualAccount, amount, { from: usualAccount });
-  
-      //THEN
-    } catch (error) {
-      error.message.should.include('revert', `Expected "revert", got ${error} instead`);
-      return;
-    }
-    should.fail('Expected revert not received');
-  
-  });
-
-
-  it('Usual account without minter role, can\'t mint tokens',async function () {
-  
-    //GIVEN
-    var amount = 1000;
-
-    //WHEN
-    try { 
-      await token.mint(usualAccount, amount, { from: usualAccount });
-   
-      //THEN
-    } catch (error) {
-      error.message.should.include('revert', `Expected "revert", got ${error} instead`);
-      return;
-    }
-    should.fail('Expected revert not received');
-
-  });
-
-  it('Usual account with minter role, can mint tokens for his account',async function () {
-    
-    //GIVEN
-    var amount = 1000;
-    var balance = (await token.balanceOf(usualAccount));
-    await token.addMinter(usualAccount, { from: owner });
-    
-    //WHEN
-    await token.mint(usualAccount, amount, { from: usualAccount });
-    
-    //THEN
-    //if not fail is ok
-  
     });
 
 
-  it('After usual account with minter role, mint tokens for his account, his balance is increased by the amount of minted tokens',async function () {
-   
-    //GIVEN
-    var balance = (await token.balanceOf(usualAccount));
-    var amount = 1000;
-    await token.addMinter(usualAccount,{ from: owner });
+    it('Contract owner can\'t mint negative amount of tokens', async function () {
 
-    //WHEN
-    await token.mint(usualAccount, amount, { from: usualAccount });
+      //GIVEN
+      var amount = -1000;
 
-    //THEN
-    (await token.balanceOf(usualAccount)).should.be.bignumber.equal(balance.add(amount));
+      //WHEN
+      try {
+        await token.mint(owner, amount, { from: owner });
 
-  });
+        //THEN
+      } catch (error) {
+        error.message.should.include('revert', `Expected "revert", got ${error} instead`);
+        return;
+      }
+      should.fail('Expected revert not received');
+
+    });
 
 
-  it('After usual account renounce minter role, he can\'t mint tokens',async function () {
-   
-    //GIVEN
-    var amount = 1000;
-    await token.addMinter(usualAccount,{ from: owner });
-    await token.renounceMinter({ from: usualAccount });
+    it('Usual account with minter role, can\'t mint negative amount of tokens', async function () {
 
-    //WHEN
-    try { 
+      //GIVEN
+      var amount = -1000;
+      await token.addMinter(usualAccount, { from: owner });
+
+      //WHEN
+      try {
+        await token.mint(usualAccount, amount, { from: usualAccount });
+
+        //THEN
+      } catch (error) {
+        error.message.should.include('revert', `Expected "revert", got ${error} instead`);
+        return;
+      }
+      should.fail('Expected revert not received');
+
+    });
+
+
+    it('Usual account without minter role, can\'t mint tokens', async function () {
+
+      //GIVEN
+      var amount = 1000;
+
+      //WHEN
+      try {
+        await token.mint(usualAccount, amount, { from: usualAccount });
+
+        //THEN
+      } catch (error) {
+        error.message.should.include('revert', `Expected "revert", got ${error} instead`);
+        return;
+      }
+      should.fail('Expected revert not received');
+
+    });
+
+    it('Usual account with minter role, can mint tokens for his account', async function () {
+
+      //GIVEN
+      var amount = 1000;
+      var balance = (await token.balanceOf(usualAccount));
+      await token.addMinter(usualAccount, { from: owner });
+
+      //WHEN
       await token.mint(usualAccount, amount, { from: usualAccount });
-    
+
       //THEN
-    } catch (error) {
-      error.message.should.include('revert', `Expected "revert", got ${error} instead`);
-      return;
-    }
-    should.fail('Expected revert not received');
+      //if not fail is ok
 
-  });
+    });
 
 
-  it('After contract owner renounce minter role, he can\'t mint tokens',async function () {
-   
-    //GIVEN
-    var amount = 1000;
-    await token.renounceMinter({ from: owner });
-    
-    //WHEN
-    try { 
-      await token.mint(owner, amount, { from: owner });
-      
+    it('After usual account with minter role, mint tokens for his account, his balance is increased by the amount of minted tokens', async function () {
+
+      //GIVEN
+      var balance = (await token.balanceOf(usualAccount));
+      var amount = 1000;
+      await token.addMinter(usualAccount, { from: owner });
+
+      //WHEN
+      await token.mint(usualAccount, amount, { from: usualAccount });
+
       //THEN
-    } catch (error) {
-      error.message.should.include('revert', `Expected "revert", got ${error} instead`);
-      return;
-    }
-    should.fail('Expected revert not received');
-  });
+      (await token.balanceOf(usualAccount)).should.be.bignumber.equal(balance.add(amount));
+
+    });
 
 
-  it('After usual account with minter role mint tokens to contract account, contract balance is incresed by amount of minted tokens', async function () {
-   
-    //GIVEN
-    var amount =  10000;
-    await token.addMinter(usualAccount,{ from: owner });
-    var balance = (await token.balanceOf(contractAccount, { from: usualAccount }));
+    it('After usual account renounce minter role, he can\'t mint tokens', async function () {
 
-    //WHEN
+      //GIVEN
+      var amount = 1000;
+      await token.addMinter(usualAccount, { from: owner });
+      await token.renounceMinter({ from: usualAccount });
+
+      //WHEN
+      try {
+        await token.mint(usualAccount, amount, { from: usualAccount });
+
+        //THEN
+      } catch (error) {
+        error.message.should.include('revert', `Expected "revert", got ${error} instead`);
+        return;
+      }
+      should.fail('Expected revert not received');
+
+    });
+
+
+    it('After contract owner renounce minter role, he can\'t mint tokens', async function () {
+
+      //GIVEN
+      var amount = 1000;
+      await token.renounceMinter({ from: owner });
+
+      //WHEN
+      try {
+        await token.mint(owner, amount, { from: owner });
+
+        //THEN
+      } catch (error) {
+        error.message.should.include('revert', `Expected "revert", got ${error} instead`);
+        return;
+      }
+      should.fail('Expected revert not received');
+    });
+
+
+    it('After usual account with minter role mint tokens to contract account, contract balance is incresed by amount of minted tokens', async function () {
+
+      //GIVEN
+      var amount = 10000;
+      await token.addMinter(usualAccount, { from: owner });
+      var balance = (await token.balanceOf(contractAccount, { from: usualAccount }));
+
+      //WHEN
       await token.mint(contractAccount, amount, { from: usualAccount });
       //THEN
       (await token.balanceOf(contractAccount, { from: usualAccount })).should.be.bignumber.equal(balance.add(amount));
 
-  });
+    });
 
 
-  it('After finish minting by contract owner, minting is finished', async function () {
-   
-    //WHEN
-    await token.finishMinting({ from: owner });
+    it('After finish minting by contract owner, minting is finished', async function () {
 
-    //THEN
-    (await token.mintingFinished({ from: owner })).should.be.equal(true);
-
-  });
-
-
-  it('After minting finished contract owner can\'t mint tokens', async function () {
-   
-    //GIVEN
-    var amount = 100;
-    await token.finishMinting({ from: owner });
-    
-    //WHEN
-    try {
-      await token.mint(owner, amount, { from: owner });
-      
-      //THEN 
-    } catch (error) {
-      error.message.should.include('revert', `Expected "revert", got ${error} instead`);
-      return;
-    }
-    should.fail('Expected revert not received');
-
-  });
-
-
-  it('After finish minting account with minter role can\'t mint tokens', async function () {
-   
-    //GIVEN
-    var amount = 1000;
-    await token.addMinter(usualAccount,{ from: owner });
-    await token.finishMinting({ from: owner });
-
-    //WHEN
-    try { 
-      await token.mint(usualAccount, amount, { from: usualAccount });
+      //WHEN
+      await token.finishMinting({ from: owner });
 
       //THEN
-    } catch (error) {
-      error.message.should.include('revert', `Expected "revert", got ${error} instead`);
-      return;
-    }
-    should.fail('Expected revert not received');
+      (await token.mintingFinished({ from: owner })).should.be.equal(true);
+
+    });
+
+
+    it('After minting finished contract owner can\'t mint tokens', async function () {
+
+      //GIVEN
+      var amount = 100;
+      await token.finishMinting({ from: owner });
+
+      //WHEN
+      try {
+        await token.mint(owner, amount, { from: owner });
+
+        //THEN 
+      } catch (error) {
+        error.message.should.include('revert', `Expected "revert", got ${error} instead`);
+        return;
+      }
+      should.fail('Expected revert not received');
+
+    });
+
+
+    it('After finish minting account with minter role can\'t mint tokens', async function () {
+
+      //GIVEN
+      var amount = 1000;
+      await token.addMinter(usualAccount, { from: owner });
+      await token.finishMinting({ from: owner });
+
+      //WHEN
+      try {
+        await token.mint(usualAccount, amount, { from: usualAccount });
+
+        //THEN
+      } catch (error) {
+        error.message.should.include('revert', `Expected "revert", got ${error} instead`);
+        return;
+      }
+      should.fail('Expected revert not received');
+
+    });
 
   });
-
 
 });
