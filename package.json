@@ -1,6 +1,6 @@
 {
   "name": "MichalPolakToken",
-  "version": "0.2.4",
+  "version": "0.2.4-alpha",
   "description": "Personal token of Michal Polak",
   "main": "truffle-config.js",
   "directories": {
