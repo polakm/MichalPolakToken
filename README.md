@@ -77,7 +77,7 @@ truffle test /test/Tranfering.test.js
 
 You have to get account with some ether. If you use ropsten network you can use [this](https://faucet.ropsten.be/) faucet.
 
-Before deploy you have to set variables `MNENOMIC` and `INFURA_API_KEY` in process.env file.
+Before deploy you have to create file with name '.env' and set in this file variables `MNENOMIC` and `INFURA_API_KEY`. 
 
 ```
 MNENOMIC = // Your metamask's recovery words
