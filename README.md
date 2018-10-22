@@ -22,20 +22,40 @@ If you want to use MPT you can use newest version of MetaMask.
 
 ## Development
 
-### Recomended tools
+### Prepare tools and environment
  
-* [Chocolatey](https://github.com/chocolatey/choco/wiki/Installation) - The package manager for Windows
-
-* [Git](https://git-scm.com/downloads) - Simple way to get project from GitHub 
+Create accounts on MetaMask and Infura
 
 * [Meta Mask](https://metamask.io/) - It allows you to run Ethereum dApps in your browser
 
-* [Visual Studio Code](https://code.visualstudio.com/) - Only if you want write a code
-
-* [NodeJS](https://docs.npmjs.com/getting-started/installing-node) - Dependencies management 
-
 * [INFURA.io](https://infura.io/) - Create account on this site, it helps deploy contracts on network 
 
+Run commands in PowerShell with Administrator permission
+
+```
+Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+```
+```
+choco install nodejs.install -y
+```
+```
+choco install vscode -y
+```
+```
+choco install git -y
+```
+```
+npm install -g truffle
+```
+```
+npm install -g ganache-cli
+```
+```
+choco install python2 -y
+choco install vcbuildtools -y
+npm config set msvs_version 2015 --global
+refreshenv
+```
 
 ### Prepare the project
 
@@ -86,7 +106,7 @@ INFURA_API_KEY = // Your Infura API Key after its registration
 
 Example for deployment on ropsten network
 ```
-truffle deployment --network ropsten
+truffle deployment --network ropsten --reset
 ```
 
 
