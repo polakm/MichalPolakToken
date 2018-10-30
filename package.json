@@ -7,7 +7,6 @@
     "test": "test"
   },
   "scripts": {
-    "test": "scripts/test.sh"
   },
   "keywords": [],
   "author": "Michał Polak",
