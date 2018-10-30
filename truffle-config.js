@@ -2,18 +2,6 @@ require('dotenv').config();
 
 const HDWalletProvider = require('truffle-hdwallet-provider');
 
-const providerWithMnemonic = (mnemonic, rpcEndpoint) =>
-  new HDWalletProvider(mnemonic, rpcEndpoint);
-
-const infuraProvider = network => providerWithMnemonic(
-  process.env.MNEMONIC || '',
-  `https://${network}.infura.io/${process.env.INFURA_API_KEY}`
-);
-
-const ropstenProvider = process.env.SOLIDITY_COVERAGE
-  ? undefined
-  : infuraProvider('ropsten');
-
 module.exports = {
   networks: {
     development: {
@@ -22,8 +10,14 @@ module.exports = {
       network_id: '*', 
     },
     ropsten: {
-      provider: ropstenProvider,
-      network_id: 3, 
+      provider: new HDWalletProvider(process.env.MNEMONIC,'https://ropsten.infura.io/' + process.env.INFURA_API_KEY),
+      network_id: 3,
+      gasPrice: 0x01 
+    },
+    main: {
+      provider: new HDWalletProvider(process.env.MNEMONIC,'https://main.infura.io/' + process.env.INFURA_API_KEY),
+      network_id: 1,
+      gasPrice: 0x01  
     },
   },
 };
