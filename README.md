@@ -106,7 +106,7 @@ INFURA_API_KEY = // Your Infura API Key after its registration
 
 Example for deployment on ropsten network
 ```
-truffle deployment --network ropsten --reset
+truffle deploy --network ropsten --reset
 ```
 
 
