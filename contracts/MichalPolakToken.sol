@@ -14,8 +14,7 @@ contract MichalPolakToken is ERC20, ERC20Detailed, ERC20Capped, ERC20Burnable, O
     string  constant TOKEN_SYMBOL = "MPT";
     uint8  constant TOKEN_DECIMALS = 18;
     
-    uint256  constant OWNER_SUPPLY = 1000000 * (10 ** uint256(TOKEN_DECIMALS));
-    uint256  constant INITIAL_SUPPLY = 10000000 * (10 ** uint256(TOKEN_DECIMALS));
+    uint256  constant INITIAL_SUPPLY = 11000000 * (10 ** uint256(TOKEN_DECIMALS));
     uint256  constant CAP = 21000000 * (10 ** uint256(TOKEN_DECIMALS));
         
     mapping(address => uint) balances;
@@ -28,8 +27,8 @@ contract MichalPolakToken is ERC20, ERC20Detailed, ERC20Capped, ERC20Burnable, O
         ERC20Burnable()
         Ownable() {
        
-        _mint(address(this), INITIAL_SUPPLY);
-        _mint(msg.sender, OWNER_SUPPLY);
+        _mint(msg.sender, INITIAL_SUPPLY);
+
     }    
 
 }
