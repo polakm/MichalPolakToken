@@ -10,7 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Changelog file with describe changes in versions 0.2.6 and 0.2.5 and unreleased changes.
 
 ### Changed
-- Change owner supply from 1 million to 11 millions tokens
+- Owner supply from 1 million to 11 millions tokens
+- Actual token address in README.md
 
 ### Removed
 - Project version from REEDME.md.

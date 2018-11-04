@@ -8,7 +8,7 @@ This is  project of my personal token based on truffle framework and [OpenZeppel
 
 ### Actual version
 The token contract is published on ropston network at address
-[0x12ead8bffa9ba8d19d0b00b42daa019c45e96a1d](https://ropsten.etherscan.io/token/0x12ead8bffa9ba8d19d0b00b42daa019c45e96a1d)
+[0xb26e88ea7a93d00123a0911a41aed7a457e0a5f0](https://ropsten.etherscan.io/token/0xb26e88ea7a93d00123a0911a41aed7a457e0a5f0)
 
 ### Free tokens
 
