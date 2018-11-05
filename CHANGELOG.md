@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Owner supply from 1 million to 11 millions tokens
 - Actual token address in README.md
+- Gas Price for mainent to 9 gwei
+- Gas Limit for mainent to 4000000
 
 ### Removed
 - Project version from REEDME.md.
