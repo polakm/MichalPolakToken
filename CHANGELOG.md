@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Actual token address in README.md
 - Gas Price for mainent to 9 gwei
 - Gas Limit for mainent to 4000000
+- Actual token address in README.md
 
 ### Removed
 - Project version from REEDME.md.
