@@ -1,40 +1,23 @@
 {
   "name": "michal-polak-token",
-  "version": "0.2.6",
+  "version": "0.3.0",
   "description": "Personal token of Michal Polak",
   "main": "truffle-config.js",
   "directories": {
     "test": "test"
   },
-  "scripts": {
-  },
+  "scripts": {},
   "keywords": [],
   "author": "Michał Polak",
   "license": "MIT",
   "devDependencies": {
-    "chai": "^4.1.2",
+    "chai": "^4.2.0",
     "chai-bignumber": "^2.0.2",
-    "coveralls": "^3.0.1",
     "dotenv": "^4.0.0",
-    "eslint": "^4.19.1",
-    "eslint-config-standard": "^10.2.1",
-    "eslint-plugin-import": "^2.13.0",
-    "eslint-plugin-node": "^5.2.1",
-    "eslint-plugin-promise": "^3.8.0",
-    "eslint-plugin-standard": "^3.1.0",
-    "ethjs-abi": "^0.2.1",
-    "ganache-cli": "^6.1.8",
     "openzeppelin-solidity": "2.0.0-rc.1",
-    "solidity-coverage": "^0.5.4",
-    "solium": "^1.1.8",
     "truffle": "^4.1.13",
     "truffle-hdwallet-provider": "0.0.5",
-    "web3-utils": "^1.0.0-beta.36"
-  },
-  "dependencies": {
     "web3": "^0.18.4",
-    "web3-event-manager": "^1.0.8",
-    "web3-provider-engine": "^14.0.6",
-    "zeppelin-solidity": "^1.12.0"
+    "web3-utils": "^1.0.0-beta.36"
   }
 }

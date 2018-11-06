@@ -52,11 +52,11 @@ contract('MichalPolakToken', function ([_, creator]) {
     });
 
     it('Creator has 1 000 000 tokens', async function () {
-      (await token.balanceOf(creator)).should.be.bignumber.equal(1000000 * Math.pow(10, 18));
+      (await token.balanceOf(creator)).should.be.bignumber.equal(11000000 * Math.pow(10, 18));
     });
 
-    it('Contract has 10 000 000 tokens', async function () {
-      (await token.balanceOf(token.address)).should.be.bignumber.equal(10000000 * Math.pow(10, 18));
+    it('Contract has 0 tokens', async function () {
+      (await token.balanceOf(token.address)).should.be.bignumber.equal(0);
     });
 
     it('Mining is not finished', async function () {
