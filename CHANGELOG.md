@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 - Project version from REEDME.md.
+- Useless dependencies
 
 ## [0.2.6] - 2018-10-30
 
