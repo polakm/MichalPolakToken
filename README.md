@@ -8,13 +8,11 @@ This is  project of my personal token based on truffle framework and [OpenZeppel
 
 ### Actual version
 The token contract is published on ropston network at address
-[0xb26e88ea7a93d00123a0911a41aed7a457e0a5f0](https://ropsten.etherscan.io/token/0xb26e88ea7a93d00123a0911a41aed7a457e0a5f0)
+[0x6e48eac6061b60c86da508c024c123e6744d960c](https://etherscan.io/token/0x6e48eac6061b60c86da508c024c123e6744d960c)
 
 ### Free tokens
 
 Please send me short message on [this](mailto:michal.polak.token@gmail.com) email. Write me why do you want these tokens and remember to add your account address. Maybe I will send you some tokens.  
-
-Currently I am sending on ropsten network.
 
 ### Wallets
 
